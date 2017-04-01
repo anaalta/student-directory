@@ -25,7 +25,7 @@ def input_students
         name = gets.chomp.capitalize.to_sym
       else
         if students.count == 1
-        puts "Now we have #{students.count} students".chomp('s')
+        puts "Now we have #{students.count} students".slice(0..-1)
       else
         puts "Now we have #{students.count} students"
       end
