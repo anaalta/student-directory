@@ -41,28 +41,25 @@ def show_students
   print_footer
 end
 
-def add_students
-@students << {name: @name, cohort: @cohort}
-end
-
 def input_students
   puts "Please enter the name of the student:"
   puts "To finish, hit return twice"
-  @name = STDIN.gets.chomp.capitalize
-  @cohort = 'default'
-  while !@name.empty? do
+#get the first name from user
+  name = STDIN.gets.chomp.capitalize
+#while not empty, repeat
+  while !name.empty? do
       add_students
         puts "Now we have #{@students.count} students"
   #get another student
     puts "Add another student name or return to quit:"
-    @name = STDIN.gets.chomp.capitalize
+    name = STDIN.gets.chomp.capitalize
   end
 end
 
 def save_students
   file = File.open("students.csv", "w")
   @students.each do |student|
-    student_data = [student[@name], student[@cohort]]
+    student_data = [student[:name], student[:cohort]]
     csv_line = student_data.join(",")
     file.puts csv_line
   end
@@ -72,20 +69,25 @@ end
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
-    @name, @cohort = line.chomp.split(',')
+    name, cohort = line.chomp.split(',')
     add_students
   end
   file.close
 end
 
+def add_students
+  @students << {name: name, cohort: :cohort.to_sym}
+end
+
 def try_load_students
   filename =  ARGV.first #first arg from the command line
-  if filename.nil?
-    filename = "students.csv"
-    puts "Loaded #{@students.count} from #{filename}, since that was the default file and you did not input another"
-  else
+  return if filename.nil? #exit methods if the filename not given
+  if File.exists?(filename)
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
+  else
+    puts "Sorry, #{filename} doesn't exist."
+    exit
   end
 end
 
