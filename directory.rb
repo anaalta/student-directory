@@ -1,4 +1,8 @@
+puts " Here's the source code of #{File.basename(__FILE__)}"
+puts source = <<'QUINE'
+
 @students = []
+require 'csv'
 
 def interactive_menu
   loop do
@@ -111,5 +115,7 @@ def print_footer
 puts "Overall, we have #{@students.count} great students".center(60, '_')
 end
 
+
 #try_load_students
 interactive_menu
+QUINE
