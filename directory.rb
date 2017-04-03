@@ -2,23 +2,20 @@
 
 def interactive_menu
   loop do
-  #1.prints the options
   print_menu
-  #2.does what user asks
   process(STDIN.gets.chomp)
   end
 end
 
 def print_menu
-  puts "1.Input the students"
-  puts "2.Show the students"
-  puts "3. Save the list of students to students.csv"
-  puts "4. Load the list from students.csv"
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "3. Save the list of students to a file"
+  puts "4. Load the list from a file"
   puts "9. Exit"
 end
 
 def process(selection)
-  #do what the user asked
   case selection
   when '1'
     input_students
@@ -46,46 +43,57 @@ def add_students
 end
 
 def input_students
-  puts "Please enter the name of the student:"
-  puts "To finish, hit return twice"
+  puts "Please enter the name of the student. \n To finish, hit return twice"
   @name = STDIN.gets.chomp.capitalize
-  @cohort = 'default'
+  @cohort = 'november'
   while !@name.empty? do
       add_students
-        puts "Now we have #{@students.count} students"
-  #get another student
+      count_students
     puts "Add another student name or return to quit:"
     @name = STDIN.gets.chomp.capitalize
   end
+  if @name.empty?
+    puts "The students are now added to the database"
+  end
+end
+
+def count_students
+  if @students.count == 1
+  puts "Now we have #{@students.count} student"
+else
+  puts "Now we have #{@students.count} students"
+end
 end
 
 def save_students
-  file = File.open("students.csv", "w")
+  puts "Where should I save the students? Give me an existing filename:"
+  file = File.open(STDIN.gets.chomp, "w") do |file|
   @students.each do |student|
-    student_data = [student[@name], student[@cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+    student_data = [student[:name], student[:cohort]]
+    file.puts student_data.join(",")
   end
-  file.close
+end
+  puts "The students list is saved"
 end
 
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
+def load_students
+  puts "From where should I load the student database?"
+  file = File.open(STDIN.gets.chomp, "r") do |file|
   file.readlines.each do |line|
     @name, @cohort = line.chomp.split(',')
     add_students
   end
-  file.close
+end
+  puts "We loaded the students now"
 end
 
 def try_load_students
   filename =  ARGV.first #first arg from the command line
   if filename.nil?
-    filename = "students.csv"
-    puts "Loaded #{@students.count} from #{filename}, since that was the default file and you did not input another"
+    filename = 'students.csv'
+    puts "Loaded #{@students.count} students from #{filename}, since that was the default file and you did not input another"
   else
     load_students(filename)
-    puts "Loaded #{@students.count} from #{filename}"
   end
 end
 
@@ -103,5 +111,5 @@ def print_footer
 puts "Overall, we have #{@students.count} great students".center(60, '_')
 end
 
-try_load_students
+#try_load_students
 interactive_menu
